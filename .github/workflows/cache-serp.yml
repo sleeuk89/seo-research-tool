@@ -1,0 +1,23 @@
+name: Cache SERP Data
+on:
+  schedule:
+    - cron: '0 0 * * *'  # Daily
+jobs:
+  cache:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+      - name: Install dependencies
+        run: |
+          pip install requests beautifulsoup4 playwright
+          playwright install
+      - name: Cache SERP data
+        env:
+          SERPAPI_KEY: ${{ secrets.SERPAPI_KEY }}
+        run: |
+          python utils/serp_cache.py "best running shoes"
+          python utils/serp_cache.py "seo tips"
